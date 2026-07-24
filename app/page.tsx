@@ -1,4 +1,5 @@
 import { listEnabledCollections } from "@/lib/collection-config";
+import { PacerSetup } from "@/components/pacer-setup";
 
 export default function Home() {
   const collections = listEnabledCollections();
@@ -75,7 +76,11 @@ export default function Home() {
                 <p>{collection.description}</p>
                 <div className="collection-footer">
                   <span>{collection.defaultEpisodesPerWeek}/week suggested</span>
-                  <span className="coming-soon">Setup coming next</span>
+                  {collection.slug === "jesus-the-christ" ? (
+                    <a className="setup-link" href="#setup">Set your pace →</a>
+                  ) : (
+                    <span className="coming-soon">Coming next</span>
+                  )}
                 </div>
               </div>
             </article>
@@ -93,6 +98,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <PacerSetup />
 
       <section className="how-section" id="how-it-works">
         <div className="section-heading compact">
