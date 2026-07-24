@@ -44,7 +44,7 @@ describe("feed engine", () => {
     expect(feed).toContain("https://www.archive.org/download/book/one.mp3");
     expect(feed).not.toContain("Chapter 2");
     expect(feed).toContain(stableGuid(collection, settings, "one"));
-    expect(feed).toContain(`${PUBLIC_ORIGIN}/artwork/jesus-the-christ-paced.jpg`);
+    expect(feed).toContain(`${PUBLIC_ORIGIN}${collection.artworkPath}`);
     expect(stableGuid(collection, settings, "one")).toBe(stableGuid(collection, settings, "one"));
     expect(parseRss(feed).episodes).toHaveLength(1);
   });

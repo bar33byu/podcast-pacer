@@ -10,9 +10,9 @@ export const podcastCollections = {
     displayName: "Jesus the Christ",
     pacedTitle: "Jesus the Christ — A Paced Reading",
     description:
-      "Listen to James E. Talmage’s complete book from the beginning, with chapters released at a pace you choose.",
+      "A complete recording of the book Jesus the Christ by Elder James E. Talmage, with chapters released at a pace you choose.",
     shortLabel: "Complete book",
-    artworkPath: "/artwork/jesus-the-christ-paced.jpg",
+    artworkPath: "/artwork/jesus-the-christ-paced-v2.png",
     defaultEpisodesPerWeek: 3,
     enabled: true,
   },

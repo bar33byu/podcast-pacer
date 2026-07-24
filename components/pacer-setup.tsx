@@ -72,7 +72,19 @@ export function PacerSetup() {
       <div className="setup-intro">
         <p className="eyebrow">Set your pace</p>
         <h2>Make Jesus the Christ arrive on your schedule.</h2>
-        <p>The complete 42-chapter archive stays out of your queue until each chapter’s scheduled day.</p>
+        <p className="setup-attribution">
+          This podcast is a recording of the book <cite>Jesus the Christ</cite>
+          {" "}by Elder James E. Talmage, who served in the Quorum of the Twelve
+          Apostles of The Church of Jesus Christ of Latter-day Saints.
+        </p>
+        <p className="setup-context">
+          First published more than 100 years ago, some of its scholarship is
+          now dated. Its testimony of the Savior, however, remains beautiful.
+        </p>
+        <p className="setup-pacing-note">
+          The complete 42-chapter archive stays out of your queue until each
+          chapter’s scheduled day.
+        </p>
       </div>
       <div className="setup-panel">
         <div className="setup-fields">

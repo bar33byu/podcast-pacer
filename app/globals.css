@@ -286,6 +286,19 @@ a {
   color: #f8f5ec;
 }
 
+.collection-cover-artwork {
+  padding: 0;
+  background: #1f2925;
+}
+
+.collection-cover-artwork::after {
+  display: none;
+}
+
+.collection-cover-image {
+  object-fit: cover;
+}
+
 .cover-1 {
   background: linear-gradient(155deg, #324b3f 0%, #172a22 100%);
 }
@@ -396,10 +409,34 @@ a {
   line-height: 1.04;
 }
 
-.setup-intro > p:last-child {
+.setup-attribution,
+.setup-context,
+.setup-pacing-note {
   max-width: 490px;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.7;
+}
+
+.setup-attribution {
+  margin: 28px 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.02rem;
+}
+
+.setup-attribution cite {
+  color: #fff;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.setup-context {
+  margin: 18px 0 0;
+  padding-left: 18px;
+  border-left: 2px solid rgba(215, 180, 119, 0.72);
+}
+
+.setup-pacing-note {
+  margin: 18px 0 0;
+  font-size: 0.88rem;
 }
 
 .setup-section .eyebrow {

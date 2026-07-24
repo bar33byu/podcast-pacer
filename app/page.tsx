@@ -1,5 +1,6 @@
 import { listEnabledCollections } from "@/lib/collection-config";
 import { PacerSetup } from "@/components/pacer-setup";
+import Image from "next/image";
 
 export default function Home() {
   const collections = listEnabledCollections();
@@ -62,14 +63,26 @@ export default function Home() {
         <div className="collection-grid">
           {collections.map((collection, index) => (
             <article className="collection-card" key={collection.slug}>
-              <div
-                className={`collection-cover cover-${index + 1}`}
-                aria-hidden="true"
-              >
-                <span className="cover-number">0{index + 1}</span>
-                <span className="cover-rule" />
-                <span className="cover-name">{collection.displayName}</span>
-              </div>
+              {collection.slug === "jesus-the-christ" ? (
+                <div className="collection-cover collection-cover-artwork">
+                  <Image
+                    className="collection-cover-image"
+                    src={collection.artworkPath}
+                    alt="Jesus the Christ paced podcast cover"
+                    fill
+                    sizes="(max-width: 620px) 100vw, (max-width: 900px) 40vw, 236px"
+                  />
+                </div>
+              ) : (
+                <div
+                  className={`collection-cover cover-${index + 1}`}
+                  aria-hidden="true"
+                >
+                  <span className="cover-number">0{index + 1}</span>
+                  <span className="cover-rule" />
+                  <span className="cover-name">{collection.displayName}</span>
+                </div>
+              )}
               <div className="collection-content">
                 <p className="collection-label">{collection.shortLabel}</p>
                 <h3>{collection.displayName}</h3>
