@@ -5,8 +5,7 @@ import type { PodcastCollection } from "@/lib/podcast-types";
 import type { PaceSettings, ScheduledEpisode } from "@/lib/pacing";
 import type { ParsedEpisode, ParsedFeed } from "@/lib/rss-parser";
 import { directChild, directChildren } from "@/lib/rss-parser";
-
-export const CANONICAL_ORIGIN = process.env.PODCAST_PACER_ORIGIN ?? "https://pacer.lavalane.org";
+import { PUBLIC_ORIGIN } from "@/lib/site-config";
 
 export function stableGuid(collection: PodcastCollection, settings: PaceSettings, sourceGuid: string): string {
   const hash = (value: string) => createHash("sha256").update(value).digest("hex").slice(0, 24);
@@ -29,11 +28,11 @@ export function buildFeed(
   for (const item of directChildren(channel, "item")) channel.removeChild(item);
   setText(document, channel, "title", collection.pacedTitle);
   setText(document, channel, "description", `${collection.description} Episodes appear at ${settings.rate} per week.`);
-  const artwork = `${CANONICAL_ORIGIN}${collection.artworkPath}`;
+  const artwork = `${PUBLIC_ORIGIN}${collection.artworkPath}`;
   const image = directChild(channel, "image") ?? channel.appendChild(document.createElement("image")) as XmlElement;
   setText(document, image, "url", artwork);
   setText(document, image, "title", collection.pacedTitle);
-  setText(document, image, "link", CANONICAL_ORIGIN);
+  setText(document, image, "link", PUBLIC_ORIGIN);
   setAttributeElement(document, channel, "itunes:image", "href", artwork);
   setAttributeElement(document, channel, "atom:link", "href", canonicalFeedUrl(collection.slug, settings), { rel: "self", type: "application/rss+xml" });
 
@@ -63,7 +62,7 @@ export function buildFeed(
 
 export function canonicalFeedUrl(slug: string, settings: PaceSettings): string {
   const params = new URLSearchParams({ start: settings.start, rate: String(settings.rate), tz: settings.timezone });
-  return `${CANONICAL_ORIGIN}/feed/v1/${slug}.xml?${params}`;
+  return `${PUBLIC_ORIGIN}/feed/v1/${slug}.xml?${params}`;
 }
 
 function setText(document: ParsedFeed["document"], parent: XmlElement, tag: string, text: string) {
