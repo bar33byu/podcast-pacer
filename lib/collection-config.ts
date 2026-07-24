@@ -30,6 +30,22 @@ export const podcastCollections = {
     defaultEpisodesPerWeek: 3,
     enabled: true,
   },
+  "old-testament-full-text": {
+    slug: "old-testament-full-text",
+    sourceKey: "come-follow-me-read-along-source",
+    displayName: "The Old Testament",
+    pacedTitle: "The Old Testament — Full-text Read-along, Paced",
+    description:
+      "A complete reading of the Old Testament in the New English Translation, read by Bradley Ross and assembled from the full-text series and final scripture-only episodes.",
+    shortLabel: "Complete NET reading",
+    artworkPath: "/artwork/old-testament-paced.png",
+    titleIncludePatterns: [
+      "^OT\\.\\d{3}\\b",
+      "^OTCFM\\.(?:45|46|47|48|49|50|51)\\b",
+    ],
+    defaultEpisodesPerWeek: 3,
+    enabled: true,
+  },
 } as const satisfies Record<CollectionSlug, PodcastCollection>;
 
 export function getPodcastCollection(

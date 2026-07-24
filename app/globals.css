@@ -421,9 +421,17 @@ a {
   background: #684524;
 }
 
+.setup-old-testament-full-text {
+  background: #162b46;
+}
+
 .setup-book-of-mormon-2025 .preview-button,
 .setup-book-of-mormon-2025 .feed-result button {
   background: #684524;
+}
+
+.setup-old-testament-full-text .preview-button {
+  background: #162b46;
 }
 
 .setup-attribution {

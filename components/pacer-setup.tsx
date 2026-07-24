@@ -105,7 +105,7 @@ export function PacerSetup({ slug, displayName, defaultEpisodesPerWeek }: PacerS
               chapter’s scheduled day.
             </p>
           </>
-        ) : (
+        ) : slug === "book-of-mormon-2025" ? (
           <>
             <p className="setup-attribution">
               This podcast is based on the public-domain text of <cite>The Book
@@ -118,6 +118,21 @@ export function PacerSetup({ slug, displayName, defaultEpisodesPerWeek }: PacerS
             <p className="setup-pacing-note">
               This edition isolates the 2025 Book of Mormon read-along from the
               surrounding years of the original podcast.
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="setup-attribution">
+              This podcast is a recording of <cite>The Old Testament</cite> in
+              the New English Translation, read by Bradley Ross.
+            </p>
+            <p className="setup-context">
+              It combines the 94 numbered full-text recordings with seven
+              scripture-only episodes that complete Daniel through Malachi.
+            </p>
+            <p className="setup-pacing-note">
+              One source recording combines Hosea 1–6 and 10–14 with Joel, so
+              Hosea 7–9 follows it in the original publication order.
             </p>
           </>
         )}

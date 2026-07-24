@@ -117,7 +117,7 @@ export default function Home() {
           <li>
             <span>1</span>
             <h3>Pick a collection</h3>
-            <p>Begin with the complete book or the focused 2025 read-along.</p>
+            <p>Choose a complete book, a focused 2025 read-along, or the Old Testament archive.</p>
           </li>
           <li>
             <span>2</span>

@@ -2,7 +2,10 @@ export type SourceKey =
   | "jesus-the-christ-source"
   | "come-follow-me-read-along-source";
 
-export type CollectionSlug = "jesus-the-christ" | "book-of-mormon-2025";
+export type CollectionSlug =
+  | "jesus-the-christ"
+  | "book-of-mormon-2025"
+  | "old-testament-full-text";
 
 export type PodcastSource = {
   key: SourceKey;
@@ -20,6 +23,7 @@ export type PodcastCollection = {
   artworkPath: string;
   publicationWindowStart?: string;
   publicationWindowEnd?: string;
+  titleIncludePatterns?: readonly string[];
   defaultEpisodesPerWeek: number;
   enabled: boolean;
 };
