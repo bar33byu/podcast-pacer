@@ -513,20 +513,114 @@ a {
   color: var(--muted);
 }
 
-.feed-result {
+.subscribe-panel {
   margin-top: 22px;
   padding: 18px;
-  display: grid;
-  gap: 10px;
   border-radius: 12px;
   background: var(--cream);
+}
+
+.subscribe-label,
+.feed-address > span {
+  display: block;
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 750;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.feed-result code {
+.subscribe-options {
+  margin-top: 13px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.subscribe-option {
+  min-height: 64px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.subscribe-option:hover,
+.subscribe-option:focus-visible {
+  border-color: rgba(85, 115, 101, 0.55);
+  box-shadow: 0 5px 16px rgba(41, 53, 47, 0.08);
+}
+
+.subscribe-option > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+
+.subscribe-option strong {
+  font-size: 0.84rem;
+}
+
+.subscribe-option small {
+  color: var(--muted);
+  font-size: 0.69rem;
+}
+
+.app-mark {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--sage-dark);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.apple .app-mark {
+  background: #8c45d8;
+}
+
+.overcast .app-mark {
+  background: #f56b21;
+}
+
+.feed .app-mark {
+  background: #d68a2f;
+  font-size: 0.55rem;
+}
+
+.spotify .app-mark {
+  background: #1d9f55;
+}
+
+.subscribe-option.unavailable {
+  cursor: not-allowed;
+  opacity: 0.56;
+}
+
+.subscribe-option.unavailable:hover {
+  border-color: var(--line);
+  box-shadow: none;
+}
+
+.feed-address {
+  margin-top: 14px;
+  padding-top: 13px;
+  display: grid;
+  gap: 7px;
+  border-top: 1px solid var(--line);
+}
+
+.feed-address code {
   overflow-wrap: anywhere;
   color: var(--ink);
   font-size: 0.76rem;
@@ -534,9 +628,12 @@ a {
   text-transform: none;
 }
 
-.feed-result button {
-  width: fit-content;
-  padding: 10px 15px;
+.subscribe-status {
+  min-height: 1.2em;
+  margin: 9px 0 0;
+  color: var(--sage);
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
 .feed-help {
@@ -683,6 +780,10 @@ footer {
   }
 
   .setup-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .subscribe-options {
     grid-template-columns: 1fr;
   }
 

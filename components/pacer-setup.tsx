@@ -21,6 +21,7 @@ export function PacerSetup() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [subscribeStatus, setSubscribeStatus] = useState("");
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -52,7 +53,17 @@ export function PacerSetup() {
   async function copyFeed() {
     await navigator.clipboard.writeText(feedUrl);
     setCopied(true);
+    setSubscribeStatus("Feed address copied.");
     window.setTimeout(() => setCopied(false), 2000);
+  }
+
+  function openPodcastApp(app: "apple" | "overcast") {
+    void navigator.clipboard.writeText(feedUrl).catch(() => undefined);
+    setSubscribeStatus(`Opening ${app === "apple" ? "Apple Podcasts" : "Overcast"}. The feed address is also copied.`);
+    const destination = app === "apple"
+      ? feedUrl.replace(/^https:\/\//, "podcast://")
+      : `overcast://x-callback-url/add?url=${encodeURIComponent(feedUrl)}`;
+    window.location.assign(destination);
   }
 
   return (
@@ -78,8 +89,30 @@ export function PacerSetup() {
           <div className="schedule-preview" aria-live="polite">
             <div className="preview-heading"><div><span>{preview.availableCount} ready now</span><h3>Your first chapters</h3></div><span>{preview.collection.episodeCount} total</span></div>
             <ol>{preview.episodes.map((episode) => <li key={`${episode.title}-${episode.date}`}><span>{episode.title}</span><time dateTime={episode.date}>{new Date(`${episode.date}T12:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</time></li>)}</ol>
-            <div className="feed-result"><span>Your permanent feed address</span><code>{feedUrl}</code><button type="button" onClick={copyFeed}>{copied ? "Copied" : "Copy feed URL"}</button></div>
-            <p className="feed-help">In Overcast, choose Add URL and paste this address. Keep it private: the URL contains your schedule.</p>
+            <div className="subscribe-panel">
+              <span className="subscribe-label">Listen in your podcast app</span>
+              <div className="subscribe-options">
+                <button className="subscribe-option apple" type="button" onClick={() => openPodcastApp("apple")}>
+                  <span className="app-mark" aria-hidden="true">A</span>
+                  <span><strong>Apple Podcasts</strong><small>Open and follow</small></span>
+                </button>
+                <button className="subscribe-option overcast" type="button" onClick={() => openPodcastApp("overcast")}>
+                  <span className="app-mark" aria-hidden="true">O</span>
+                  <span><strong>Overcast</strong><small>Open and add</small></span>
+                </button>
+                <button className="subscribe-option feed" type="button" onClick={copyFeed}>
+                  <span className="app-mark" aria-hidden="true">RSS</span>
+                  <span><strong>{copied ? "Copied" : "Feed URL"}</strong><small>Use in another app</small></span>
+                </button>
+                <div className="subscribe-option spotify unavailable" aria-label="Spotify does not support custom RSS feeds">
+                  <span className="app-mark" aria-hidden="true">S</span>
+                  <span><strong>Spotify</strong><small>Custom feeds unsupported</small></span>
+                </div>
+              </div>
+              <div className="feed-address"><span>Your permanent feed address</span><code>{feedUrl}</code></div>
+              <p className="subscribe-status" aria-live="polite">{subscribeStatus}</p>
+            </div>
+            <p className="feed-help">If an app does not open automatically, use its “Add by URL” option and paste the copied address. Keep it private: the URL contains your schedule.</p>
           </div>
         )}
       </div>
