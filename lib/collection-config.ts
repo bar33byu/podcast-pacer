@@ -22,11 +22,11 @@ export const podcastCollections = {
     displayName: "The Book of Mormon",
     pacedTitle: "The Book of Mormon — 2025 Read-along, Paced",
     description:
-      "Move through the Book of Mormon episodes from the 2025 Come, Follow Me Read-along without the surrounding years.",
+      "A reading based on the public-domain text of The Book of Mormon, read by Bradley Ross with an AI voice changer distinguishing speakers in the text.",
     shortLabel: "2025 read-along",
     artworkPath: "/artwork/book-of-mormon-2025-paced.jpg",
     publicationWindowStart: "2025-01-01",
-    publicationWindowEnd: "2026-01-01",
+    publicationWindowEnd: "2025-12-21",
     defaultEpisodesPerWeek: 3,
     enabled: true,
   },

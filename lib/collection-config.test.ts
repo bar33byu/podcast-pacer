@@ -21,11 +21,11 @@ describe("podcast collection configuration", () => {
     expect(collection).not.toHaveProperty("publicationWindowEnd");
   });
 
-  it("locks the Book of Mormon collection to source dates in 2025", () => {
+  it("locks the Book of Mormon collection to the 2025 run through Moroni 10", () => {
     const collection = podcastCollections["book-of-mormon-2025"];
 
     expect(collection.publicationWindowStart).toBe("2025-01-01");
-    expect(collection.publicationWindowEnd).toBe("2026-01-01");
+    expect(collection.publicationWindowEnd).toBe("2025-12-21");
   });
 
   it("references an enabled source for every enabled collection", () => {

@@ -11,9 +11,11 @@ export async function GET(request: Request, context: RouteContext<"/api/preview/
     const now = new Date();
     const result = await preparePodcast(collection, settings, now);
     const availableCount = result.scheduled.filter((episode) => episode.scheduledInstant <= now).length;
+    const finalEpisode = result.scheduled.at(-1)!;
     return Response.json({
       collection: { title: result.collection.pacedTitle, episodeCount: result.scheduled.length },
       availableCount,
+      endDate: finalEpisode.scheduledDate,
       episodes: result.scheduled.slice(0, 10).map((episode) => ({
         title: episode.title,
         date: episode.scheduledDate,

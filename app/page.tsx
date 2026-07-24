@@ -61,39 +61,24 @@ export default function Home() {
         </div>
 
         <div className="collection-grid">
-          {collections.map((collection, index) => (
+          {collections.map((collection) => (
             <article className="collection-card" key={collection.slug}>
-              {collection.slug === "jesus-the-christ" ? (
-                <div className="collection-cover collection-cover-artwork">
-                  <Image
-                    className="collection-cover-image"
-                    src={collection.artworkPath}
-                    alt="Jesus the Christ paced podcast cover"
-                    fill
-                    sizes="(max-width: 620px) 100vw, (max-width: 900px) 40vw, 236px"
-                  />
-                </div>
-              ) : (
-                <div
-                  className={`collection-cover cover-${index + 1}`}
-                  aria-hidden="true"
-                >
-                  <span className="cover-number">0{index + 1}</span>
-                  <span className="cover-rule" />
-                  <span className="cover-name">{collection.displayName}</span>
-                </div>
-              )}
+              <div className="collection-cover collection-cover-artwork">
+                <Image
+                  className="collection-cover-image"
+                  src={collection.artworkPath}
+                  alt={`${collection.displayName} podcast cover`}
+                  fill
+                  sizes="(max-width: 620px) 100vw, (max-width: 900px) 40vw, 236px"
+                />
+              </div>
               <div className="collection-content">
                 <p className="collection-label">{collection.shortLabel}</p>
                 <h3>{collection.displayName}</h3>
                 <p>{collection.description}</p>
                 <div className="collection-footer">
                   <span>{collection.defaultEpisodesPerWeek}/week suggested</span>
-                  {collection.slug === "jesus-the-christ" ? (
-                    <a className="setup-link" href="#setup">Set your pace →</a>
-                  ) : (
-                    <span className="coming-soon">Coming next</span>
-                  )}
+                  <a className="setup-link" href={`#setup-${collection.slug}`}>Set your pace →</a>
                 </div>
               </div>
             </article>
@@ -112,7 +97,14 @@ export default function Home() {
         </div>
       </section>
 
-      <PacerSetup />
+      {collections.map((collection) => (
+        <PacerSetup
+          key={collection.slug}
+          slug={collection.slug}
+          displayName={collection.displayName}
+          defaultEpisodesPerWeek={collection.defaultEpisodesPerWeek}
+        />
+      ))}
 
       <section className="how-section" id="how-it-works">
         <div className="section-heading compact">

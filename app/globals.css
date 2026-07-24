@@ -417,6 +417,15 @@ a {
   line-height: 1.7;
 }
 
+.setup-book-of-mormon-2025 {
+  background: #684524;
+}
+
+.setup-book-of-mormon-2025 .preview-button,
+.setup-book-of-mormon-2025 .feed-result button {
+  background: #684524;
+}
+
 .setup-attribution {
   margin: 28px 0 0;
   color: rgba(255, 255, 255, 0.9);
@@ -548,6 +557,21 @@ a {
 .schedule-preview time {
   flex: 0 0 auto;
   color: var(--muted);
+}
+
+.preview-end {
+  margin: 18px 0 0;
+  padding: 15px 17px;
+  border: 1px solid rgba(85, 115, 101, 0.2);
+  border-radius: 10px;
+  background: rgba(237, 241, 233, 0.62);
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.preview-end strong {
+  color: var(--ink);
 }
 
 .subscribe-panel {
