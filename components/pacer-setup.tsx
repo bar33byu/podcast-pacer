@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { PUBLIC_ORIGIN } from "@/lib/site-config";
 import type { CollectionSlug } from "@/lib/podcast-types";
+import { MAX_EPISODES_PER_WEEK } from "@/lib/pacing-constants";
 
 type Preview = {
   collection: { title: string; episodeCount: number };
@@ -125,7 +126,7 @@ export function PacerSetup({ slug, displayName, defaultEpisodesPerWeek }: PacerS
         <div className="setup-fields">
           <label>Begin on<input type="date" max={localDate()} value={start} onChange={(event) => setStart(event.target.value)} /></label>
           <label>Episodes each week<select value={rate} onChange={(event) => setRate(Number(event.target.value))}>
-            {[1, 2, 3, 4, 5, 6, 7].map((number) => <option key={number} value={number}>{number}</option>)}
+            {Array.from({ length: MAX_EPISODES_PER_WEEK }, (_, index) => index + 1).map((number) => <option key={number} value={number}>{number}</option>)}
           </select></label>
           <label>Your time zone<input value={timezone} onChange={(event) => setTimezone(event.target.value)} /></label>
         </div>
