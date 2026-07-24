@@ -33,6 +33,15 @@ describe("feed engine", () => {
     });
   });
 
+  it("allows up to ten episodes per week", () => {
+    const now = Temporal.Instant.from("2026-07-24T12:00:00Z");
+    const valid = new URLSearchParams({ start: "2026-07-20", rate: "10", tz: "America/Denver" });
+    const invalid = new URLSearchParams({ start: "2026-07-20", rate: "11", tz: "America/Denver" });
+
+    expect(parsePaceSettings(valid, now).rate).toBe(10);
+    expect(() => parsePaceSettings(invalid, now)).toThrow("between 1 and 10");
+  });
+
   it("generates stable identities and only publishes episodes whose date has arrived", () => {
     const parsed = parseRss(fixture);
     const episodes = parsed.episodes.sort((a, b) => a.originalDate.getTime() - b.originalDate.getTime());
@@ -44,7 +53,7 @@ describe("feed engine", () => {
     expect(feed).toContain("https://www.archive.org/download/book/one.mp3");
     expect(feed).not.toContain("Chapter 2");
     expect(feed).toContain(stableGuid(collection, settings, "one"));
-    expect(feed).toContain(`${PUBLIC_ORIGIN}/artwork/jesus-the-christ-paced.jpg`);
+    expect(feed).toContain(`${PUBLIC_ORIGIN}${collection.artworkPath}`);
     expect(stableGuid(collection, settings, "one")).toBe(stableGuid(collection, settings, "one"));
     expect(parseRss(feed).episodes).toHaveLength(1);
   });

@@ -286,6 +286,19 @@ a {
   color: #f8f5ec;
 }
 
+.collection-cover-artwork {
+  padding: 0;
+  background: #1f2925;
+}
+
+.collection-cover-artwork::after {
+  display: none;
+}
+
+.collection-cover-image {
+  object-fit: cover;
+}
+
 .cover-1 {
   background: linear-gradient(155deg, #324b3f 0%, #172a22 100%);
 }
@@ -396,10 +409,51 @@ a {
   line-height: 1.04;
 }
 
-.setup-intro > p:last-child {
+.setup-attribution,
+.setup-context,
+.setup-pacing-note {
   max-width: 490px;
   color: rgba(255, 255, 255, 0.7);
   line-height: 1.7;
+}
+
+.setup-book-of-mormon-2025 {
+  background: #684524;
+}
+
+.setup-old-testament-full-text {
+  background: #162b46;
+}
+
+.setup-book-of-mormon-2025 .preview-button,
+.setup-book-of-mormon-2025 .feed-result button {
+  background: #684524;
+}
+
+.setup-old-testament-full-text .preview-button {
+  background: #162b46;
+}
+
+.setup-attribution {
+  margin: 28px 0 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.02rem;
+}
+
+.setup-attribution cite {
+  color: #fff;
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.setup-context {
+  margin: 18px 0 0;
+  padding-left: 18px;
+  border-left: 2px solid rgba(215, 180, 119, 0.72);
+}
+
+.setup-pacing-note {
+  margin: 18px 0 0;
+  font-size: 0.88rem;
 }
 
 .setup-section .eyebrow {
@@ -511,6 +565,21 @@ a {
 .schedule-preview time {
   flex: 0 0 auto;
   color: var(--muted);
+}
+
+.preview-end {
+  margin: 18px 0 0;
+  padding: 15px 17px;
+  border: 1px solid rgba(85, 115, 101, 0.2);
+  border-radius: 10px;
+  background: rgba(237, 241, 233, 0.62);
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.preview-end strong {
+  color: var(--ink);
 }
 
 .subscribe-panel {

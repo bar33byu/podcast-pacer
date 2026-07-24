@@ -1,5 +1,6 @@
 import { Temporal } from "@js-temporal/polyfill";
 import { FeedError } from "@/lib/feed-error";
+import { MAX_EPISODES_PER_WEEK, MIN_EPISODES_PER_WEEK } from "@/lib/pacing-constants";
 
 export type PaceSettings = { start: string; rate: number; timezone: string };
 export type ScheduledEpisode<T> = T & { scheduledDate: string; scheduledInstant: Date };
@@ -15,7 +16,9 @@ export function parsePaceSettings(params: URLSearchParams, now = Temporal.Now.in
   } catch {
     throw new FeedError("Choose a valid start date and time zone.", 400);
   }
-  if (!Number.isInteger(rate) || rate < 1 || rate > 7) throw new FeedError("Rate must be between 1 and 7 episodes per week.", 400);
+  if (!Number.isInteger(rate) || rate < MIN_EPISODES_PER_WEEK || rate > MAX_EPISODES_PER_WEEK) {
+    throw new FeedError(`Rate must be between ${MIN_EPISODES_PER_WEEK} and ${MAX_EPISODES_PER_WEEK} episodes per week.`, 400);
+  }
   const today = now.toZonedDateTimeISO(timezone).toPlainDate();
   if (Temporal.PlainDate.compare(startDate, today) > 0) throw new FeedError("Start date cannot be in the future.", 400);
   return { start, rate, timezone };
