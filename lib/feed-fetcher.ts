@@ -1,5 +1,6 @@
 import { FeedError } from "@/lib/feed-error";
 import type { PodcastSource } from "@/lib/podcast-types";
+import { PUBLIC_ORIGIN } from "@/lib/site-config";
 
 const MAX_FEED_BYTES = 10 * 1024 * 1024;
 const MAX_REDIRECTS = 3;
@@ -10,7 +11,7 @@ export async function fetchSourceFeed(source: PodcastSource): Promise<string> {
 
   for (let redirect = 0; redirect <= MAX_REDIRECTS; redirect += 1) {
     const response = await fetch(url, {
-      headers: { "user-agent": "PodcastPacer/1.0 (+https://pacer.lavalane.org)" },
+      headers: { "user-agent": `PodcastPacer/1.0 (+${PUBLIC_ORIGIN})` },
       redirect: "manual",
       signal: AbortSignal.timeout(10_000),
       next: { revalidate: 3600 },

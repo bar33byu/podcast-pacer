@@ -4,6 +4,7 @@ import { podcastCollections } from "@/lib/collection-config";
 import { buildFeed, stableGuid } from "@/lib/feed-builder";
 import { parsePaceSettings, scheduleEpisodes } from "@/lib/pacing";
 import { parseRss } from "@/lib/rss-parser";
+import { PUBLIC_ORIGIN } from "@/lib/site-config";
 
 const fixture = `<?xml version="1.0"?><rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"><channel><title>Original</title><description>Old</description><link>https://example.com</link><item><title>Chapter 2</title><guid>two</guid><pubDate>Mon, 08 Jan 2024 12:00:00 -0700</pubDate><enclosure url="http://www.archive.org/download/book/two.mp3" type="audio/mpeg" length="0" /></item><item><title>Chapter 1</title><guid>one</guid><pubDate>Mon, 01 Jan 2024 12:00:00 -0700</pubDate><enclosure url="http://www.archive.org/download/book/one.mp3" type="audio/mpeg" length="0" /></item></channel></rss>`;
 
@@ -43,6 +44,7 @@ describe("feed engine", () => {
     expect(feed).toContain("https://www.archive.org/download/book/one.mp3");
     expect(feed).not.toContain("Chapter 2");
     expect(feed).toContain(stableGuid(collection, settings, "one"));
+    expect(feed).toContain(`${PUBLIC_ORIGIN}/artwork/jesus-the-christ-paced.jpg`);
     expect(stableGuid(collection, settings, "one")).toBe(stableGuid(collection, settings, "one"));
     expect(parseRss(feed).episodes).toHaveLength(1);
   });

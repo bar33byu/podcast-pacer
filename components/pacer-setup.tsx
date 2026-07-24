@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { PUBLIC_ORIGIN } from "@/lib/site-config";
 
 type Preview = {
   collection: { title: string; episodeCount: number };
@@ -32,7 +33,7 @@ export function PacerSetup() {
   }, []);
 
   const query = useMemo(() => new URLSearchParams({ start, rate: String(rate), tz: timezone }).toString(), [start, rate, timezone]);
-  const feedUrl = `https://pacer.lavalane.org/feed/v1/jesus-the-christ.xml?${query}`;
+  const feedUrl = `${PUBLIC_ORIGIN}/feed/v1/jesus-the-christ.xml?${query}`;
 
   async function makePreview() {
     setLoading(true);
@@ -109,7 +110,7 @@ export function PacerSetup() {
                   <span><strong>Spotify</strong><small>Custom feeds unsupported</small></span>
                 </div>
               </div>
-              <div className="feed-address"><span>Your permanent feed address</span><code>{feedUrl}</code></div>
+              <div className="feed-address"><span>Your feed address</span><code>{feedUrl}</code></div>
               <p className="subscribe-status" aria-live="polite">{subscribeStatus}</p>
             </div>
             <p className="feed-help">If an app does not open automatically, use its “Add by URL” option and paste the copied address. Keep it private: the URL contains your schedule.</p>
