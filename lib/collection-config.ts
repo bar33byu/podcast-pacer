@@ -24,7 +24,7 @@ export const podcastCollections = {
     description:
       "A reading based on the public-domain text of The Book of Mormon, read by Bradley Ross with an AI voice changer distinguishing speakers in the text.",
     shortLabel: "2025 read-along",
-    artworkPath: "/artwork/book-of-mormon-2025-paced.jpg",
+    artworkPath: "/artwork/book-of-mormon-2025-paced-v3.png",
     publicationWindowStart: "2025-01-05",
     publicationWindowEnd: "2025-12-21",
     defaultEpisodesPerWeek: 3,

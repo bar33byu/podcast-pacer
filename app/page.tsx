@@ -1,5 +1,6 @@
 import { listEnabledCollections } from "@/lib/collection-config";
 import { PacerSetup } from "@/components/pacer-setup";
+import { CustomFeedSetup } from "@/components/custom-feed-setup";
 import Image from "next/image";
 
 export default function Home() {
@@ -87,12 +88,13 @@ export default function Home() {
 
         <div className="custom-podcast-note">
           <div>
-            <span className="beta-label">Later</span>
+            <span className="beta-label">Beta</span>
             <h3>Have another finished series in mind?</h3>
             <p>
-              A beta tool for pacing another podcast—such as a limited series
-              you missed—is planned after these collections are ready.
+              Try an unaffiliated example or bring an HTTPS RSS or Apple Podcasts
+              link, then preview the source before creating a feed.
             </p>
+            <a className="setup-link" href="#custom-feed">Pace another podcast →</a>
           </div>
         </div>
       </section>
@@ -105,6 +107,8 @@ export default function Home() {
           defaultEpisodesPerWeek={collection.defaultEpisodesPerWeek}
         />
       ))}
+
+      <CustomFeedSetup />
 
       <section className="how-section" id="how-it-works">
         <div className="section-heading compact">

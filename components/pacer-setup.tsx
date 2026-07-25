@@ -173,10 +173,6 @@ export function PacerSetup({ slug, displayName, defaultEpisodesPerWeek }: PacerS
                   <span className="app-mark" aria-hidden="true">RSS</span>
                   <span><strong>{copied ? "Copied" : "Feed URL"}</strong><small>Use in another app</small></span>
                 </button>
-                <div className="subscribe-option spotify unavailable" aria-label="Spotify does not support custom RSS feeds">
-                  <span className="app-mark" aria-hidden="true">S</span>
-                  <span><strong>Spotify</strong><small>Custom feeds unsupported</small></span>
-                </div>
               </div>
               <div className="feed-address"><span>Your feed address</span><code>{feedUrl}</code></div>
               <p className="subscribe-status" aria-live="polite">{subscribeStatus}</p>

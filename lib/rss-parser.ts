@@ -8,12 +8,23 @@ export type ParsedEpisode = {
   sourceGuid: string;
   originalDate: Date;
   originalCalendarDate: string;
+  originalPubDate: string;
 };
 
 export type ParsedFeed = {
   document: XmlDocument;
   channel: XmlElement;
   episodes: ParsedEpisode[];
+  title: string;
+  description: string;
+  author: string;
+  link: string;
+  artworkUrl?: string;
+};
+
+type ParseRssOptions = {
+  skipInvalidEpisodes?: boolean;
+  requireAudioEnclosure?: boolean;
 };
 
 export function directChildren(parent: XmlElement, name: string): XmlElement[] {
@@ -28,7 +39,7 @@ export function directChild(parent: XmlElement, name: string): XmlElement | unde
   return directChildren(parent, name)[0];
 }
 
-export function parseRss(xml: string): ParsedFeed {
+export function parseRss(xml: string, options: ParseRssOptions = {}): ParsedFeed {
   if (/<!\s*(DOCTYPE|ENTITY)/i.test(xml)) throw new FeedError("Unsafe XML declaration in source feed.", 502);
   const errors: string[] = [];
   const document = new DOMParser({
@@ -40,23 +51,46 @@ export function parseRss(xml: string): ParsedFeed {
 
   const channel = document.getElementsByTagName("channel")[0];
   if (!channel) throw new FeedError("Source is not an RSS feed.", 502);
-  const episodes = directChildren(channel, "item").map((element, index) => {
+  const episodes: ParsedEpisode[] = [];
+  for (const [index, element] of directChildren(channel, "item").entries()) {
     const title = directChild(element, "title")?.textContent?.trim() || `Episode ${index + 1}`;
     const guid = directChild(element, "guid")?.textContent?.trim();
     const enclosureUrl = directChild(element, "enclosure")?.getAttribute("url");
     const pubDate = directChild(element, "pubDate")?.textContent?.trim();
-    if (!pubDate) throw new FeedError(`Episode “${title}” has no publication date.`, 502);
+    if (!pubDate || (options.requireAudioEnclosure && !enclosureUrl)) {
+      if (options.skipInvalidEpisodes) continue;
+      throw new FeedError(`Episode “${title}” has no usable publication date or audio enclosure.`, 502);
+    }
     const originalDate = new Date(pubDate);
-    if (Number.isNaN(originalDate.getTime())) throw new FeedError(`Episode “${title}” has an invalid date.`, 502);
-    return {
+    if (Number.isNaN(originalDate.getTime())) {
+      if (options.skipInvalidEpisodes) continue;
+      throw new FeedError(`Episode “${title}” has an invalid date.`, 502);
+    }
+    episodes.push({
       element,
       title,
       sourceGuid: guid || enclosureUrl || `${title}:${pubDate}`,
       originalDate,
       originalCalendarDate: rfc2822CalendarDate(pubDate),
-    };
-  });
-  return { document, channel, episodes };
+      originalPubDate: pubDate,
+    });
+  }
+
+  const image = directChild(channel, "image");
+  const rssImage = image ? directChild(image, "url")?.textContent?.trim() : undefined;
+  const itunesImage = directChild(channel, "itunes:image")?.getAttribute("href")?.trim();
+  return {
+    document,
+    channel,
+    episodes,
+    title: directChild(channel, "title")?.textContent?.trim() || "Untitled podcast",
+    description: directChild(channel, "description")?.textContent?.trim() || "",
+    author: directChild(channel, "itunes:author")?.textContent?.trim()
+      || directChild(channel, "author")?.textContent?.trim()
+      || "Original podcast publisher",
+    link: directChild(channel, "link")?.textContent?.trim() || "",
+    artworkUrl: itunesImage || rssImage || undefined,
+  };
 }
 
 function rfc2822CalendarDate(value: string): string {
