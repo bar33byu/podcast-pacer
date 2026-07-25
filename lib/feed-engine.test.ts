@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { Temporal } from "@js-temporal/polyfill";
 import { podcastCollections } from "@/lib/collection-config";
-import { buildFeed, stableGuid } from "@/lib/feed-builder";
+import { buildFeed, canonicalFeedUrl, stableGuid } from "@/lib/feed-builder";
 import { parsePaceSettings, scheduleEpisodes } from "@/lib/pacing";
 import { parseRss } from "@/lib/rss-parser";
 import { PUBLIC_ORIGIN } from "@/lib/site-config";
@@ -56,5 +56,31 @@ describe("feed engine", () => {
     expect(feed).toContain(`${PUBLIC_ORIGIN}${collection.artworkPath}`);
     expect(stableGuid(collection, settings, "one")).toBe(stableGuid(collection, settings, "one"));
     expect(parseRss(feed).episodes).toHaveLength(1);
+  });
+
+  it("locks the v1 URL, schedule, and episode identity contract", () => {
+    const settings = {
+      start: "2026-07-24",
+      rate: 3,
+      timezone: "America/Denver",
+    };
+    const collection = podcastCollections["jesus-the-christ"];
+
+    expect(canonicalFeedUrl(collection.slug, settings)).toBe(
+      `${PUBLIC_ORIGIN}/feed/v1/jesus-the-christ.xml?start=2026-07-24&rate=3&tz=America%2FDenver`,
+    );
+    expect(scheduleEpisodes([0, 1, 2, 3, 4, 5], settings).map(
+      (episode) => episode.scheduledDate,
+    )).toEqual([
+      "2026-07-24",
+      "2026-07-26",
+      "2026-07-28",
+      "2026-07-31",
+      "2026-08-02",
+      "2026-08-04",
+    ]);
+    expect(stableGuid(collection, settings, "source-guid-123")).toBe(
+      "urn:lavalane:podcast-pacer:v1:jesus-the-christ:ebe147cface90ce9807f4915:934517b3e11565dfe4757283",
+    );
   });
 });
