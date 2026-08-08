@@ -11,7 +11,7 @@ type Preview = {
   availableCount: number;
   endDate: string;
   episodes: { title: string; date: string; available: boolean }[];
-  availableEpisodes: WebPlayerEpisode[];
+  previewEpisodes: WebPlayerEpisode[];
 };
 
 type PacerSetupProps = {
@@ -160,7 +160,7 @@ export function PacerSetup({ slug, displayName, defaultEpisodesPerWeek }: PacerS
               available, your final episode will arrive on{" "}
               <strong><time dateTime={preview.endDate}>{formatDate(preview.endDate)}</time></strong>.
             </p>
-            <WebEpisodePlayer key={feedUrl} episodes={preview.availableEpisodes} />
+            <WebEpisodePlayer key={feedUrl} episodes={preview.previewEpisodes} />
             <div className="subscribe-panel">
               <span className="subscribe-label">Listen in your podcast app</span>
               <div className="subscribe-options">

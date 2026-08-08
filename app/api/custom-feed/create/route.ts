@@ -26,8 +26,7 @@ export async function POST(request: Request) {
     const prepared = await prepareCustomPodcast(payload, now);
     const token = signCustomFeedToken(prepared.payload);
     const finalEpisode = prepared.scheduled.at(-1)!;
-    const availableEpisodes = prepared.scheduled.flatMap((episode) => {
-      if (episode.scheduledInstant > now) return [];
+    const previewEpisodes = prepared.scheduled.flatMap((episode) => {
       const audioUrl = webPlaybackUrl(episode.enclosureUrl);
       return audioUrl ? [{
         title: episode.title,
@@ -45,7 +44,7 @@ export async function POST(request: Request) {
       },
       availableCount: prepared.scheduled.filter((episode) => episode.scheduledInstant <= now).length,
       endDate: finalEpisode.scheduledDate,
-      availableEpisodes,
+      previewEpisodes,
       episodes: prepared.scheduled.slice(0, 10).map((episode) => ({
         title: episode.title,
         originalDate: episode.originalCalendarDate,

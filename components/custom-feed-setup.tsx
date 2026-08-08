@@ -12,7 +12,7 @@ type CustomPreview = {
   availableCount: number;
   endDate: string;
   episodes: Array<{ title: string; originalDate: string; date: string; available: boolean }>;
-  availableEpisodes: WebPlayerEpisode[];
+  previewEpisodes: WebPlayerEpisode[];
 };
 
 function localDate() {
@@ -208,7 +208,7 @@ export function CustomFeedSetup() {
             <div className="preview-heading"><div><span>{preview.availableCount} ready now</span><h3>{preview.collection.title}</h3></div><span>{preview.collection.episodeCount} total</span></div>
             <ol>{preview.episodes.map((episode) => <li key={`${episode.title}-${episode.date}`}><span><strong>{episode.title}</strong><small>Originally {formatDate(episode.originalDate)}</small></span><time dateTime={episode.date}>{formatDate(episode.date)}</time></li>)}</ol>
             <p className="preview-end">Based on the episodes currently available, the final episode will arrive on <strong><time dateTime={preview.endDate}>{formatDate(preview.endDate)}</time></strong>.</p>
-            <WebEpisodePlayer key={preview.feedUrl} episodes={preview.availableEpisodes} />
+            <WebEpisodePlayer key={preview.feedUrl} episodes={preview.previewEpisodes} />
             {adjusting && <p className="replacement-warning">Subscribe to this replacement, then remove the old paced subscription. The old stateless URL will continue to work.</p>}
             <div className="subscribe-panel">
               <span className="subscribe-label">Listen in your podcast app</span>

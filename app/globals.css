@@ -614,6 +614,13 @@ a {
   font-weight: 500;
 }
 
+.web-player-description {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
 .web-player-current {
   margin-top: 15px;
   padding: 16px;
@@ -639,12 +646,42 @@ a {
   font-size: 0.72rem;
 }
 
+.web-player-controls {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+}
+
 .web-player audio {
   width: 100%;
   height: 42px;
-  margin-top: 14px;
   display: block;
   color-scheme: light;
+}
+
+.web-player-speed {
+  display: grid;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.web-player-speed select {
+  height: 42px;
+  min-width: 84px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
 }
 
 .web-player-queue {
@@ -1253,6 +1290,10 @@ footer {
   .web-player-queue button {
     grid-template-columns: 1fr;
     gap: 4px;
+  }
+
+  .web-player-controls {
+    grid-template-columns: 1fr;
   }
 
   .collection-card {

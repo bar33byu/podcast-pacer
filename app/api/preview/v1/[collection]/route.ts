@@ -13,8 +13,7 @@ export async function GET(request: Request, context: RouteContext<"/api/preview/
     const result = await preparePodcast(collection, settings, now);
     const availableCount = result.scheduled.filter((episode) => episode.scheduledInstant <= now).length;
     const finalEpisode = result.scheduled.at(-1)!;
-    const availableEpisodes = result.scheduled.flatMap((episode) => {
-      if (episode.scheduledInstant > now) return [];
+    const previewEpisodes = result.scheduled.flatMap((episode) => {
       const audioUrl = webPlaybackUrl(episode.enclosureUrl);
       return audioUrl ? [{
         title: episode.title,
@@ -27,7 +26,7 @@ export async function GET(request: Request, context: RouteContext<"/api/preview/
       collection: { title: result.collection.pacedTitle, episodeCount: result.scheduled.length },
       availableCount,
       endDate: finalEpisode.scheduledDate,
-      availableEpisodes,
+      previewEpisodes,
       episodes: result.scheduled.slice(0, 10).map((episode) => ({
         title: episode.title,
         date: episode.scheduledDate,

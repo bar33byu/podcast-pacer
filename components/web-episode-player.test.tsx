@@ -18,7 +18,7 @@ const episodes = [
 ];
 
 describe("web episode player", () => {
-  it("plays the first released episode and lets the listener select another", () => {
+  it("previews every episode and lets the listener select another", () => {
     render(<WebEpisodePlayer episodes={episodes} />);
 
     expect(screen.getByRole("heading", { name: "Listen here" })).toBeInTheDocument();
@@ -36,7 +36,22 @@ describe("web episode player", () => {
     expect(screen.getByText(/Originally Jan 2, 2020/)).toBeInTheDocument();
   });
 
-  it("renders nothing when no released episode has playable audio", () => {
+  it("changes playback speed and keeps it when another episode is selected", () => {
+    render(<WebEpisodePlayer episodes={episodes} />);
+
+    const speed = screen.getByLabelText("Playback speed");
+    fireEvent.change(speed, { target: { value: "1.5" } });
+    expect(screen.getByLabelText("Listen to Episode one")).toHaveProperty("playbackRate", 1.5);
+
+    fireEvent.click(screen.getByRole("button", { name: /Episode two/ }));
+    const nextAudio = screen.getByLabelText("Listen to Episode two");
+    fireEvent.loadedMetadata(nextAudio);
+
+    expect(nextAudio).toHaveProperty("playbackRate", 1.5);
+    expect(speed).toHaveValue("1.5");
+  });
+
+  it("renders nothing when no episode has playable audio", () => {
     const { container } = render(<WebEpisodePlayer episodes={[]} />);
     expect(container).toBeEmptyDOMElement();
   });
