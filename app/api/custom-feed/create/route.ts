@@ -4,6 +4,7 @@ import type { CustomFeedPayloadV1 } from "@/lib/custom-feed-types";
 import { prepareCustomPodcast } from "@/lib/custom-podcast-service";
 import { errorResponse } from "@/lib/route-utils";
 import { readLimitedJson } from "@/lib/request-json";
+import { webPlaybackUrl } from "@/lib/web-playback";
 
 export const runtime = "nodejs";
 
@@ -25,6 +26,17 @@ export async function POST(request: Request) {
     const prepared = await prepareCustomPodcast(payload, now);
     const token = signCustomFeedToken(prepared.payload);
     const finalEpisode = prepared.scheduled.at(-1)!;
+    const availableEpisodes = prepared.scheduled.flatMap((episode) => {
+      if (episode.scheduledInstant > now) return [];
+      const audioUrl = webPlaybackUrl(episode.enclosureUrl);
+      return audioUrl ? [{
+        title: episode.title,
+        originalDate: episode.originalCalendarDate,
+        date: episode.scheduledDate,
+        audioUrl,
+      }] : [];
+    });
+
     return Response.json({
       feedUrl: customFeedUrl(token),
       collection: {
@@ -33,6 +45,7 @@ export async function POST(request: Request) {
       },
       availableCount: prepared.scheduled.filter((episode) => episode.scheduledInstant <= now).length,
       endDate: finalEpisode.scheduledDate,
+      availableEpisodes,
       episodes: prepared.scheduled.slice(0, 10).map((episode) => ({
         title: episode.title,
         originalDate: episode.originalCalendarDate,

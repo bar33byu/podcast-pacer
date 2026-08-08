@@ -4,12 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import { PUBLIC_ORIGIN } from "@/lib/site-config";
 import type { CollectionSlug } from "@/lib/podcast-types";
 import { MAX_EPISODES_PER_WEEK } from "@/lib/pacing-constants";
+import { WebEpisodePlayer, type WebPlayerEpisode } from "@/components/web-episode-player";
 
 type Preview = {
   collection: { title: string; episodeCount: number };
   availableCount: number;
   endDate: string;
   episodes: { title: string; date: string; available: boolean }[];
+  availableEpisodes: WebPlayerEpisode[];
 };
 
 type PacerSetupProps = {
@@ -158,6 +160,7 @@ export function PacerSetup({ slug, displayName, defaultEpisodesPerWeek }: PacerS
               available, your final episode will arrive on{" "}
               <strong><time dateTime={preview.endDate}>{formatDate(preview.endDate)}</time></strong>.
             </p>
+            <WebEpisodePlayer key={feedUrl} episodes={preview.availableEpisodes} />
             <div className="subscribe-panel">
               <span className="subscribe-label">Listen in your podcast app</span>
               <div className="subscribe-options">
