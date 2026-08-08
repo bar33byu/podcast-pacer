@@ -9,6 +9,7 @@ export type ParsedEpisode = {
   originalDate: Date;
   originalCalendarDate: string;
   originalPubDate: string;
+  enclosureUrl?: string;
 };
 
 export type ParsedFeed = {
@@ -55,7 +56,7 @@ export function parseRss(xml: string, options: ParseRssOptions = {}): ParsedFeed
   for (const [index, element] of directChildren(channel, "item").entries()) {
     const title = directChild(element, "title")?.textContent?.trim() || `Episode ${index + 1}`;
     const guid = directChild(element, "guid")?.textContent?.trim();
-    const enclosureUrl = directChild(element, "enclosure")?.getAttribute("url");
+    const enclosureUrl = directChild(element, "enclosure")?.getAttribute("url")?.trim() || undefined;
     const pubDate = directChild(element, "pubDate")?.textContent?.trim();
     if (!pubDate || (options.requireAudioEnclosure && !enclosureUrl)) {
       if (options.skipInvalidEpisodes) continue;
@@ -73,6 +74,7 @@ export function parseRss(xml: string, options: ParseRssOptions = {}): ParsedFeed
       originalDate,
       originalCalendarDate: rfc2822CalendarDate(pubDate),
       originalPubDate: pubDate,
+      enclosureUrl,
     });
   }
 
