@@ -656,6 +656,55 @@ a {
   font-weight: 800;
 }
 
+.web-player-status {
+  margin-top: 14px;
+  padding: 14px 15px;
+  border: 1px solid rgba(201, 154, 82, 0.38);
+  border-radius: 10px;
+  background: rgba(201, 154, 82, 0.1);
+}
+
+.web-player-status.is-error {
+  border-color: rgba(155, 49, 41, 0.32);
+  background: rgba(155, 49, 41, 0.07);
+}
+
+.web-player-status p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.web-player-status > div {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+}
+
+.web-player-status button,
+.web-player-status a {
+  color: var(--sage-dark);
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.web-player-status button {
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--sage-dark);
+  color: #fff;
+  cursor: pointer;
+}
+
+.web-player-status a {
+  text-underline-offset: 3px;
+}
+
 .web-player-queue {
   max-height: 520px;
   margin-top: 12px;

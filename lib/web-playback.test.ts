@@ -8,7 +8,10 @@ describe("web playback URL", () => {
       "https://cdn.example/episode.mp3",
     );
     expect(webPlaybackUrl("http://www.archive.org/download/book/one.mp3")).toBe(
-      "https://www.archive.org/download/book/one.mp3",
+      "https://archive.org/download/book/one.mp3",
+    );
+    expect(webPlaybackUrl("https://www.archive.org/download/book/two.mp3")).toBe(
+      "https://archive.org/download/book/two.mp3",
     );
   });
 

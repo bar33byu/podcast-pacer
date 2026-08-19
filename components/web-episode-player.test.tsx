@@ -20,6 +20,7 @@ const episodes = [
 describe("web episode player", () => {
   beforeEach(() => {
     vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+    vi.spyOn(HTMLMediaElement.prototype, "load").mockImplementation(() => undefined);
   });
 
   afterEach(() => {
@@ -58,6 +59,33 @@ describe("web episode player", () => {
 
     expect(nextAudio).toHaveProperty("playbackRate", 1.5);
     expect(speed).toHaveValue("1.5");
+  });
+
+  it("explains slow Internet Archive playback and offers recovery controls", () => {
+    render(
+      <WebEpisodePlayer
+        episodes={[{
+          title: "Chapter one",
+          date: "2026-08-01",
+          audioUrl: "https://archive.org/download/book/chapter-one.mp3",
+        }]}
+      />,
+    );
+
+    fireEvent.play(screen.getByLabelText("Listen to Chapter one"));
+
+    expect(screen.getByRole("status")).toHaveTextContent("Archive.org is taking longer than usual");
+    expect(screen.getByRole("link", { name: "Open audio directly" })).toHaveAttribute(
+      "href",
+      "https://archive.org/download/book/chapter-one.mp3",
+    );
+
+    fireEvent.error(screen.getByLabelText("Listen to Chapter one"));
+    expect(screen.getByRole("alert")).toHaveTextContent("Archive.org couldn’t load this episode");
+
+    fireEvent.click(screen.getByRole("button", { name: "Retry playback" }));
+    expect(HTMLMediaElement.prototype.load).toHaveBeenCalled();
+    expect(HTMLMediaElement.prototype.play).toHaveBeenCalled();
   });
 
   it("renders nothing when no episode has playable audio", () => {
