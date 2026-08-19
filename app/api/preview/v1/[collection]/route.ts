@@ -19,6 +19,7 @@ export async function GET(request: Request, context: RouteContext<"/api/preview/
         title: episode.title,
         date: episode.scheduledDate,
         audioUrl,
+        available: episode.scheduledInstant <= now,
       }] : [];
     });
 
@@ -27,11 +28,6 @@ export async function GET(request: Request, context: RouteContext<"/api/preview/
       availableCount,
       endDate: finalEpisode.scheduledDate,
       previewEpisodes,
-      episodes: result.scheduled.slice(0, 10).map((episode) => ({
-        title: episode.title,
-        date: episode.scheduledDate,
-        available: episode.scheduledInstant <= now,
-      })),
     }, { headers: { "cache-control": "public, s-maxage=900, stale-while-revalidate=3600" } });
   } catch (error) {
     return errorResponse(error);
