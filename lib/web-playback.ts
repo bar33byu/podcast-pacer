@@ -3,6 +3,11 @@ export function webPlaybackUrl(enclosureUrl: string | undefined): string | undef
 
   try {
     const url = new URL(enclosureUrl);
+
+    if (url.hostname === "www.archive.org") {
+      url.hostname = "archive.org";
+    }
+
     if (url.protocol === "https:") return url.toString();
 
     if (

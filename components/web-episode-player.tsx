@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent, type SyntheticEvent } from "react";
 
 const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 1.75, 2] as const;
+type PlaybackState = "idle" | "loading" | "waiting" | "ready" | "playing" | "error";
 
 export type WebPlayerEpisode = {
   title: string;
@@ -34,6 +35,15 @@ function pauseOtherPlayers(event: SyntheticEvent<HTMLAudioElement>) {
   });
 }
 
+function isInternetArchiveUrl(audioUrl: string) {
+  try {
+    const hostname = new URL(audioUrl).hostname;
+    return hostname === "archive.org" || hostname.endsWith(".archive.org");
+  } catch {
+    return false;
+  }
+}
+
 export function WebEpisodePlayer({
   episodes,
   eyebrow = "Browser listening",
@@ -46,6 +56,7 @@ export function WebEpisodePlayer({
   const audioRef = useRef<HTMLAudioElement>(null);
   const playAfterSelection = useRef(false);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [playbackState, setPlaybackState] = useState<PlaybackState>("idle");
   const [selectedUrl, setSelectedUrl] = useState(episodes[0]?.audioUrl ?? "");
   const selected = episodes.find((episode) => episode.audioUrl === selectedUrl) ?? episodes[0];
 
@@ -53,13 +64,15 @@ export function WebEpisodePlayer({
     if (!playAfterSelection.current) return;
     playAfterSelection.current = false;
     const playRequest = audioRef.current?.play();
-    void playRequest?.catch(() => undefined);
+    void playRequest?.catch(() => setPlaybackState("error"));
   }, [selectedUrl]);
 
   function playEpisode(audioUrl: string) {
+    setPlaybackState("loading");
+
     if (audioUrl === selectedUrl) {
       const playRequest = audioRef.current?.play();
-      void playRequest?.catch(() => undefined);
+      void playRequest?.catch(() => setPlaybackState("error"));
       return;
     }
 
@@ -67,7 +80,20 @@ export function WebEpisodePlayer({
     setSelectedUrl(audioUrl);
   }
 
+  function retryPlayback() {
+    const player = audioRef.current;
+    if (!player) return;
+    setPlaybackState("loading");
+    player.load();
+    const playRequest = player.play();
+    void playRequest.catch(() => setPlaybackState("error"));
+  }
+
   if (!selected) return null;
+
+  const archiveEpisode = isInternetArchiveUrl(selected.audioUrl);
+  const showArchiveStatus = archiveEpisode
+    && (playbackState === "loading" || playbackState === "waiting" || playbackState === "error");
 
   return (
     <section className="web-player" aria-labelledby={headingId}>
@@ -97,7 +123,19 @@ export function WebEpisodePlayer({
             onLoadedMetadata={(event) => {
               event.currentTarget.playbackRate = playbackRate;
             }}
-            onPlay={pauseOtherPlayers}
+            onLoadStart={() => {
+              if (playbackState !== "idle") setPlaybackState("loading");
+            }}
+            onCanPlay={() => setPlaybackState("ready")}
+            onWaiting={() => setPlaybackState("waiting")}
+            onPlaying={() => setPlaybackState("playing")}
+            onError={() => setPlaybackState("error")}
+            onPlay={(event) => {
+              pauseOtherPlayers(event);
+              if (event.currentTarget.readyState < event.currentTarget.HAVE_FUTURE_DATA) {
+                setPlaybackState("loading");
+              }
+            }}
             preload="none"
             src={selected.audioUrl}
             aria-label={`Listen to ${selected.title}`}
@@ -119,6 +157,22 @@ export function WebEpisodePlayer({
             </select>
           </label>
         </div>
+        {showArchiveStatus && (
+          <div
+            className={`web-player-status ${playbackState === "error" ? "is-error" : ""}`}
+            role={playbackState === "error" ? "alert" : "status"}
+          >
+            <p>
+              {playbackState === "error"
+                ? "Archive.org couldn’t load this episode. Its media service may be temporarily unavailable."
+                : "Archive.org is taking longer than usual. Keep this page open while the episode connects."}
+            </p>
+            <div>
+              <button type="button" onClick={retryPlayback}>Retry playback</button>
+              <a href={selected.audioUrl} target="_blank" rel="noreferrer">Open audio directly</a>
+            </div>
+          </div>
+        )}
       </div>
       {episodes.length > 1 && (
         <div className="web-player-queue" role="group" aria-label="Podcast episodes">
