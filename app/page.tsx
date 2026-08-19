@@ -25,27 +25,16 @@ export default function Home() {
         </nav>
 
         <div className="hero-content" id="top">
-          <p className="eyebrow">A calmer way through a great series</p>
-          <h1>Listen from the beginning. Let the next episode come to you.</h1>
+          <p className="eyebrow">Listen now or set your pace</p>
+          <h1>Great books, ready when you are.</h1>
           <p className="hero-copy">
-            Create a personal podcast feed that releases an archive at your
-            pace—without hunting for the next episode or filling your queue all
-            at once.
+            Play any episode in your browser, or create a personal feed that
+            delivers the series a few episodes at a time.
           </p>
           <a className="primary-link" href="#collections">
-            Choose a collection
+            Choose a podcast
             <span aria-hidden="true">↓</span>
           </a>
-        </div>
-
-        <div className="pace-visual" aria-hidden="true">
-          <span className="pace-line" />
-          {["Now", "Next", "Later"].map((label, index) => (
-            <span className="pace-stop" key={label}>
-              <i style={{ animationDelay: `${index * 180}ms` }} />
-              <small>{label}</small>
-            </span>
-          ))}
         </div>
       </section>
 
@@ -56,14 +45,19 @@ export default function Home() {
             <h2>Where would you like to begin?</h2>
           </div>
           <p>
-            Each paced edition is separate from the original podcast, with a
-            schedule designed around you.
+            Every episode is ready to play here. Choose a series to listen now
+            or have it delivered on a schedule designed around you.
           </p>
         </div>
 
         <div className="collection-grid">
           {collections.map((collection) => (
-            <article className="collection-card" key={collection.slug}>
+            <a
+              className="collection-card"
+              href={`#setup-${collection.slug}`}
+              key={collection.slug}
+              aria-label={`Explore ${collection.displayName}, listen to episodes, and set a pace`}
+            >
               <div className="collection-cover collection-cover-artwork">
                 <Image
                   className="collection-cover-image"
@@ -79,10 +73,10 @@ export default function Home() {
                 <p>{collection.description}</p>
                 <div className="collection-footer">
                   <span>{collection.defaultEpisodesPerWeek}/week suggested</span>
-                  <a className="setup-link" href={`#setup-${collection.slug}`}>Set your pace →</a>
+                  <span className="setup-link">Listen &amp; set your pace →</span>
                 </div>
               </div>
-            </article>
+            </a>
           ))}
         </div>
 

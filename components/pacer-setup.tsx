@@ -10,7 +10,6 @@ type Preview = {
   collection: { title: string; episodeCount: number };
   availableCount: number;
   endDate: string;
-  episodes: { title: string; date: string; available: boolean }[];
   previewEpisodes: WebPlayerEpisode[];
 };
 
@@ -33,23 +32,53 @@ function formatDate(date: string) {
   });
 }
 
+async function fetchPreview(slug: CollectionSlug, query: string, signal?: AbortSignal) {
+  const response = await fetch(`/api/preview/v1/${slug}?${query}`, { signal });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || "Preview unavailable.");
+  return data as Preview;
+}
+
 export function PacerSetup({ slug, displayName, defaultEpisodesPerWeek }: PacerSetupProps) {
   const [start, setStart] = useState("");
   const [rate, setRate] = useState(defaultEpisodesPerWeek);
   const [timezone, setTimezone] = useState("America/Denver");
   const [preview, setPreview] = useState<Preview>();
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [subscribeStatus, setSubscribeStatus] = useState("");
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      setStart(localDate());
-      setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Denver");
+    const controller = new AbortController();
+    const timer = window.setTimeout(async () => {
+      const initialStart = localDate();
+      const initialTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Denver";
+      const initialQuery = new URLSearchParams({
+        start: initialStart,
+        rate: String(defaultEpisodesPerWeek),
+        tz: initialTimezone,
+      }).toString();
+
+      setStart(initialStart);
+      setTimezone(initialTimezone);
+      setLoading(true);
+      setError("");
+
+      try {
+        setPreview(await fetchPreview(slug, initialQuery, controller.signal));
+      } catch (reason) {
+        if (reason instanceof DOMException && reason.name === "AbortError") return;
+        setError(reason instanceof Error ? reason.message : "Preview unavailable.");
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
     }, 0);
-    return () => window.clearTimeout(timer);
-  }, []);
+    return () => {
+      controller.abort();
+      window.clearTimeout(timer);
+    };
+  }, [defaultEpisodesPerWeek, slug]);
 
   const query = useMemo(() => new URLSearchParams({ start, rate: String(rate), tz: timezone }).toString(), [start, rate, timezone]);
   const feedUrl = `${PUBLIC_ORIGIN}/feed/v1/${slug}.xml?${query}`;
@@ -57,12 +86,8 @@ export function PacerSetup({ slug, displayName, defaultEpisodesPerWeek }: PacerS
   async function makePreview() {
     setLoading(true);
     setError("");
-    setPreview(undefined);
     try {
-      const response = await fetch(`/api/preview/v1/${slug}?${query}`);
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Preview unavailable.");
-      setPreview(data);
+      setPreview(await fetchPreview(slug, query));
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Preview unavailable.");
     } finally {
@@ -89,8 +114,8 @@ export function PacerSetup({ slug, displayName, defaultEpisodesPerWeek }: PacerS
   return (
     <section className={`setup-section setup-${slug}`} id={`setup-${slug}`}>
       <div className="setup-intro">
-        <p className="eyebrow">Set your pace</p>
-        <h2>Make {displayName} arrive on your schedule.</h2>
+        <p className="eyebrow">Listen now or set your pace</p>
+        <h2>Listen to {displayName}, or make it arrive on your schedule.</h2>
         {slug === "jesus-the-christ" ? (
           <>
             <p className="setup-attribution">
@@ -148,19 +173,27 @@ export function PacerSetup({ slug, displayName, defaultEpisodesPerWeek }: PacerS
           <label>Your time zone<input value={timezone} onChange={(event) => setTimezone(event.target.value)} /></label>
         </div>
         <button className="preview-button" type="button" onClick={makePreview} disabled={!start || loading}>
-          {loading ? "Reading the archive…" : "Preview my schedule"}
+          {loading ? "Reading the archive…" : "Update schedule"}
         </button>
+        {loading && !preview && (
+          <p className="preview-loading" role="status">Building your default schedule…</p>
+        )}
         {error && <p className="form-error" role="alert">{error}</p>}
         {preview && (
           <div className="schedule-preview" aria-live="polite">
-            <div className="preview-heading"><div><span>{preview.availableCount} ready now</span><h3>Your first episodes</h3></div><span>{preview.collection.episodeCount} total</span></div>
-            <ol>{preview.episodes.map((episode) => <li key={`${episode.title}-${episode.date}`}><span>{episode.title}</span><time dateTime={episode.date}>{formatDate(episode.date)}</time></li>)}</ol>
+            <WebEpisodePlayer
+              key={feedUrl}
+              episodes={preview.previewEpisodes}
+              eyebrow={`${preview.availableCount} ready in your paced feed`}
+              heading="Episodes & delivery dates"
+              countLabel={`${preview.collection.episodeCount} total`}
+              description="Choose any episode to listen now. Its date shows when it will arrive with your current settings."
+            />
             <p className="preview-end">
               Based on the {preview.collection.episodeCount} episodes currently
               available, your final episode will arrive on{" "}
               <strong><time dateTime={preview.endDate}>{formatDate(preview.endDate)}</time></strong>.
             </p>
-            <WebEpisodePlayer key={feedUrl} episodes={preview.previewEpisodes} />
             <div className="subscribe-panel">
               <span className="subscribe-label">Listen in your podcast app</span>
               <div className="subscribe-options">

@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { WebEpisodePlayer } from "@/components/web-episode-player";
 
@@ -18,6 +18,14 @@ const episodes = [
 ];
 
 describe("web episode player", () => {
+  beforeEach(() => {
+    vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("previews every episode and lets the listener select another", () => {
     render(<WebEpisodePlayer episodes={episodes} />);
 
@@ -34,6 +42,7 @@ describe("web episode player", () => {
       "https://cdn.example/two.mp3",
     );
     expect(screen.getByText(/Originally Jan 2, 2020/)).toBeInTheDocument();
+    expect(HTMLMediaElement.prototype.play).toHaveBeenCalled();
   });
 
   it("changes playback speed and keeps it when another episode is selected", () => {

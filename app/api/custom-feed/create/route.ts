@@ -33,6 +33,7 @@ export async function POST(request: Request) {
         originalDate: episode.originalCalendarDate,
         date: episode.scheduledDate,
         audioUrl,
+        available: episode.scheduledInstant <= now,
       }] : [];
     });
 

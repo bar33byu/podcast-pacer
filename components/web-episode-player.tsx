@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, type ChangeEvent, type SyntheticEvent } from "react";
+import { useEffect, useId, useRef, useState, type ChangeEvent, type SyntheticEvent } from "react";
 
 const PLAYBACK_RATES = [0.75, 1, 1.25, 1.5, 1.75, 2] as const;
 
@@ -9,10 +9,15 @@ export type WebPlayerEpisode = {
   date: string;
   audioUrl: string;
   originalDate?: string;
+  available?: boolean;
 };
 
 type WebEpisodePlayerProps = {
   episodes: WebPlayerEpisode[];
+  eyebrow?: string;
+  heading?: string;
+  description?: string;
+  countLabel?: string;
 };
 
 function formatDate(date: string) {
@@ -29,13 +34,38 @@ function pauseOtherPlayers(event: SyntheticEvent<HTMLAudioElement>) {
   });
 }
 
-export function WebEpisodePlayer({ episodes }: WebEpisodePlayerProps) {
+export function WebEpisodePlayer({
+  episodes,
+  eyebrow = "Browser listening",
+  heading = "Listen here",
+  description = "Preview any episode here. Your paced feed will still release episodes on schedule.",
+  countLabel,
+}: WebEpisodePlayerProps) {
   const headingId = useId();
   const speedId = useId();
   const audioRef = useRef<HTMLAudioElement>(null);
+  const playAfterSelection = useRef(false);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [selectedUrl, setSelectedUrl] = useState(episodes[0]?.audioUrl ?? "");
   const selected = episodes.find((episode) => episode.audioUrl === selectedUrl) ?? episodes[0];
+
+  useEffect(() => {
+    if (!playAfterSelection.current) return;
+    playAfterSelection.current = false;
+    const playRequest = audioRef.current?.play();
+    void playRequest?.catch(() => undefined);
+  }, [selectedUrl]);
+
+  function playEpisode(audioUrl: string) {
+    if (audioUrl === selectedUrl) {
+      const playRequest = audioRef.current?.play();
+      void playRequest?.catch(() => undefined);
+      return;
+    }
+
+    playAfterSelection.current = true;
+    setSelectedUrl(audioUrl);
+  }
 
   if (!selected) return null;
 
@@ -43,14 +73,12 @@ export function WebEpisodePlayer({ episodes }: WebEpisodePlayerProps) {
     <section className="web-player" aria-labelledby={headingId}>
       <div className="web-player-heading">
         <div>
-          <span>Browser listening</span>
-          <h4 id={headingId}>Listen here</h4>
+          <span>{eyebrow}</span>
+          <h4 id={headingId}>{heading}</h4>
         </div>
-        <span>{episodes.length} episodes</span>
+        <span>{countLabel ?? `${episodes.length} episodes`}</span>
       </div>
-      <p className="web-player-description">
-        Preview any episode here. Your paced feed will still release episodes on schedule.
-      </p>
+      <p className="web-player-description">{description}</p>
       <div className="web-player-current">
         <span>Selected episode</span>
         <strong>{selected.title}</strong>
@@ -99,10 +127,22 @@ export function WebEpisodePlayer({ episodes }: WebEpisodePlayerProps) {
               type="button"
               key={`${episode.audioUrl}-${episode.date}`}
               aria-pressed={episode.audioUrl === selected.audioUrl}
-              onClick={() => setSelectedUrl(episode.audioUrl)}
+              aria-label={`Play ${episode.title}, delivered ${formatDate(episode.date)}`}
+              onClick={() => playEpisode(episode.audioUrl)}
             >
-              <span>{episode.title}</span>
-              <time dateTime={episode.date}>{formatDate(episode.date)}</time>
+              <span className="web-player-episode">
+                <span className="web-player-play" aria-hidden="true">
+                  {episode.audioUrl === selected.audioUrl ? "▶" : "▷"}
+                </span>
+                <span>
+                  <strong>{episode.title}</strong>
+                  <small>{episode.available ? "Ready in your paced feed" : "Listen now in browser"}</small>
+                </span>
+              </span>
+              <span className="web-player-delivery">
+                <small>Delivers</small>
+                <time dateTime={episode.date}>{formatDate(episode.date)}</time>
+              </span>
             </button>
           ))}
         </div>
